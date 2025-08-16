@@ -1,0 +1,35 @@
+<!doctype html><html lang='en'><head>
+<meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Procedural Dungeon</title><link rel='stylesheet' href='../../assets/css/style.css'></head><body>
+<header class='nav'><div class='container'><a class='brand' href='../../index.html'><- Back</a><div class='badge'>Procedural</div></div></header>
+<section class='container prose'>
+  <h2>Procedural Dungeon</h2>
+  <p>Creates a random cave-like map. You can change how full and how smooth it is.</p>
+  <div class='center'><img src='../../assets/images/preview_dungeon.png' alt='Preview' class='img-frame' style='max-width:100%;height:auto;margin-bottom:10px'></div>
+  <div class='controls'><button class='btn' id='gen'>Generate</button><label>Fill % <input id='fill' type='range' min='35' max='60' value='48'></label><label>Steps <input id='steps' type='range' min='2' max='6' value='4'></label></div>
+  <div class='center'><canvas id='dg' width='720' height='480' class='img-frame'></canvas></div>
+  <h3>What this does (simple)</h3>
+  <ul><li>Click Generate for a new map.</li><li>Fill % = more or fewer walls.</li><li>Steps = smoother or noisier map.</li></ul>
+</section>
+<footer><div class='container'>Contact: <a href='mailto:ambrosetheshield6@gmail.com'>ambrosetheshield6@gmail.com</a></div></footer>
+<script>
+const cv=document.getElementById('dg'), ctx=cv.getContext('2d'); const W=90,H=60,S=8;
+function genGrid(pct){
+  const g=new Array(H); for(let y=0;y<H;y++){g[y]=new Array(W); for(let x=0;x<W;x++){ g[y][x]=(Math.random()*100<pct||x==0||y==0||x==W-1||y==H-1)?1:0; } } return g;
+}
+function step(g){
+  const n=[]; for(let y=0;y<H;y++){n[y]=new Array(W).fill(0); for(let x=0;x<W;x++){ let walls=0; for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){ if(dx==0&&dy==0) continue; const xx=x+dx, yy=y+dy; if(xx<0||yy<0||xx>=W||yy>=H||g[yy][xx]==1) walls++; } n[y][x]=(walls>=5)?1:0; } } return n;
+}
+function draw(g){
+  ctx.fillStyle='#0f1526'; ctx.fillRect(0,0,cv.width,cv.height);
+  for(let y=0;y<H;y++) for(let x=0;x<W;x++){ ctx.fillStyle = g[y][x]? '#0b1226':'#5ea0ff'; ctx.fillRect(x*S,y*S,S,S); }
+}
+function main(){
+  let g=genGrid(+document.getElementById('fill').value);
+  const steps=+document.getElementById('steps').value;
+  for(let i=0;i<steps;i++) g=step(g);
+  draw(g);
+}
+document.getElementById('gen').onclick=main; main();
+</script>
+</body></html>

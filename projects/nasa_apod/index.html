@@ -1,0 +1,24 @@
+<!doctype html><html lang='en'><head>
+<meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>NASA APOD</title><link rel='stylesheet' href='../../assets/css/style.css'></head><body>
+<header class='nav'><div class='container'><a class='brand' href='../../index.html'><- Back</a><div class='badge'>API</div></div></header>
+<section class='container prose'>
+  <h2>NASA APOD</h2>
+  <p>Shows NASA's Astronomy Picture of the Day and the short description.</p>
+  <div class='center'><img src='../../assets/images/preview_apod.png' alt='Preview' class='img-frame' style='max-width:100%;height:auto;margin-bottom:10px'></div>
+  <div class='controls'><button class='btn' id='load'>Load Today</button></div>
+  <div id='out' class='center'></div>
+  <h3>What this does (simple)</h3>
+  <ul><li>Click Load Today.</li><li>If it fails, it is probably rate limits.</li><li>Image and text are from NASA.</li></ul>
+</section>
+<footer><div class='container'>Contact: <a href='mailto:ambrosetheshield6@gmail.com'>ambrosetheshield6@gmail.com</a></div></footer>
+<script>
+document.getElementById('load').onclick=async function(){
+  const out=document.getElementById('out'); out.textContent='Loading...';
+  try{
+    const r=await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY'); if(!r.ok) throw new Error('HTTP '+r.status);
+    const j=await r.json(); out.innerHTML='<div class="prose"><h3>'+ (j.title||'') +'</h3><img src="'+j.url+'" alt="APOD" class="img-frame" style="max-width:100%;height:auto"><p>'+ (j.explanation||'') +'</p></div>';
+  }catch(e){ out.textContent='Failed: '+e.message; }
+};
+</script>
+</body></html>
